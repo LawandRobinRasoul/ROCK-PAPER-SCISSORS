@@ -1,54 +1,74 @@
-console.log("Låt oss spela sten sax påse!")
-
+console.log("Låt oss spela sten sax påse!");
+const divs = document.querySelectorAll("div");
 let points = [0, 0];
-game();
+divs.forEach((div) => div.addEventListener("click", game));
 
+function game(e) {
+	const endgame = document.getElementById("2");
+	let playersChoice = this.classList.value;
 
-function game() {
-    for(let i = 0; i < 5; i++)
-    {
-   points = playRound(choice(), computerPlay())
-    }
-    console.log("resultater blev " + points[0] + "-" + points[1]);
+	e.stopPropagation();
+	points = playRound(playersChoice, computerPlay());
+
+	if (points[0] == 5) {
+		endgame.textContent = "Du vann mot datorn, grattis!";
+		endgame.style.cssText = "color:green;";
+
+		document.getElementById("1").textContent =
+			"Resultat: " + points[0] + "-" + points[1];
+		divs.forEach((div) => div.removeEventListener("click", game));
+		setTimeout(playAgain, 4000);
+	} else if (points[1] == 5) {
+		endgame.textContent = "Du förlorade mot datorn, bättre lycka nästa gång!";
+		endgame.style.cssText = "color:red;";
+		document.getElementById("1").textContent =
+			"Resultat: " + points[0] + "-" + points[1];
+		divs.forEach((div) => div.removeEventListener("click", game));
+		setTimeout(playAgain, 4000);
+	}
+	document.getElementById("1").textContent =
+		"Resultat: " + points[0] + "-" + points[1];
+}
+
+function playAgain() {
+	location.reload();
 }
 
 function playRound(playersChoice, computerChoice) {
+	const roundGame = document.getElementById("3");
 
-    if (playersChoice == computerChoice)
-    {
-        console.log("Du spelade lika mot monstret")
+	if (playersChoice == computerChoice) {
+		roundGame.textContent =
+			"Det blev lika denna rundan, ni båda valde " + computerChoice;
+	} else if (
+		(computerChoice == "Sten" && playersChoice == "Sax") ||
+		(computerChoice == "Sax" && playersChoice == "Påse") ||
+		(computerChoice == "Påse" && playersChoice == "Sten")
+	) {
+		roundGame.textContent =
+			"Du förlorade denna rundan,  du valde " +
+			playersChoice +
+			" och datorn valde " +
+			computerChoice;
 
-        points[0] += 1;
-        points[1] += 1;
+		points[1] += 1;
+	} else {
+		roundGame.textContent =
+			"Du vann denna rundan, du valde " +
+			playersChoice +
+			" och datorn valde " +
+			computerChoice;
+		points[0] += 1;
+	}
 
-    }
-    else if ((computerChoice == "Sten" && playersChoice == "Sax") ||
-    (computerChoice== "Sax" && playersChoice == "Påse") ||
-    (computerChoice == "Påse" && playersChoice == "Sten"))
-    {
-        console.log("Du förlorade mot monstret");
-        points[1] += 1;
-    }
-    else {
-        console.log("Du vann mot monstret")
-        points[0] += 1;
-    }
-    
-    return points;
-}
-
-function choice () {
-    let playersChoice = prompt("Välj sten sax eller påse:");
-    playersChoice = playersChoice.toLowerCase();
-    playersChoice = playersChoice[0].toUpperCase() + playersChoice.slice(1);
-    return playersChoice;
+	return points;
 }
 
 function computerPlay() {
-const computersChoices = ["Sten", "Sax", "Påse" ]
+	const computersChoices = ["Sten", "Sax", "Påse"];
 
-let computerChoice = computersChoices[(Math.random() * computersChoices.length) | 0];
+	let computerChoice =
+		computersChoices[(Math.random() * computersChoices.length) | 0];
 
-return computerChoice;
-
+	return computerChoice;
 }
